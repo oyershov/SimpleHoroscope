@@ -1,26 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const botsLogic = require('./logic.json');
+
+class App extends Component {
+  state = {
+    count: 0
+  };
+
+  render() {
+    const { count } = this.state;
+
+    return (
+      <div className="App">
+        {botsLogic[count].answer && <div>{botsLogic[count].answer}</div>}
+        {botsLogic[count].question && <div>{botsLogic[count].question}</div>}
+        <div>{this.state.count}</div>
+        <input id="mainInput" type="text" onKeyPress={this.handleKeyPress} />
+      </div>
+    );
+  }
+
+  handleIncreaseCounter = () => {
+    this.setState(prevState => ({
+      count: prevState.count + 1
+    }));
+  };
+
+  handleSetDefaultCounter = () => {
+    this.setState({ count: 0 });
+  };
+
+  handleKeyPress = event => {
+    if (event.charCode === 13) {
+      const mainInput = document.getElementById("mainInput");
+      if (mainInput) {
+        mainInput.value = "";
+
+        if (botsLogic[this.state.count + 1]) {
+          this.handleIncreaseCounter();
+        } else {
+          this.handleSetDefaultCounter();
+        }
+      }
+    } 
+  }
 }
+
 
 export default App;
