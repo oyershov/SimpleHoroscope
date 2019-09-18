@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const botsLogic = require('./logic.json');
+
 class App extends Component {
   state = {
     count: 0
   };
 
   render() {
+    const { count } = this.state;
+
     return (
       <div className="App">
+        {botsLogic[count].answer && <div>{botsLogic[count].answer}</div>}
+        {botsLogic[count].question && <div>{botsLogic[count].question}</div>}
         <div>{this.state.count}</div>
-        <input id="mainInput" type="text" onChange={this.handleInputValue} onKeyPress={this.handleKeyPress} />
+        <input id="mainInput" type="text" onKeyPress={this.handleKeyPress} />
       </div>
     );
   }
@@ -21,16 +27,21 @@ class App extends Component {
     }));
   };
 
-  handleInputValue = event => {
-    console.log('Value: ', event.target.value);
-  }
-  
+  handleSetDefaultCounter = () => {
+    this.setState({ count: 0 });
+  };
+
   handleKeyPress = event => {
     if (event.charCode === 13) {
       const mainInput = document.getElementById("mainInput");
       if (mainInput) {
         mainInput.value = "";
-        this.handleIncreaseCounter();
+
+        if (botsLogic[this.state.count + 1]) {
+          this.handleIncreaseCounter();
+        } else {
+          this.handleSetDefaultCounter();
+        }
       }
     } 
   }
