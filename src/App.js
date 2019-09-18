@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    count: 0
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <div>{this.state.count}</div>
+        <input id="mainInput" type="text" onChange={this.handleInputValue} onKeyPress={this.handleKeyPress} />
+      </div>
+    );
+  }
+
+  handleIncreaseCounter = () => {
+    this.setState(prevState => ({
+      count: prevState.count + 1
+    }));
+  };
+
+  handleInputValue = event => {
+    console.log('Value: ', event.target.value);
+  }
+  
+  handleKeyPress = event => {
+    if (event.charCode === 13) {
+      const mainInput = document.getElementById("mainInput");
+      if (mainInput) {
+        mainInput.value = "";
+        this.handleIncreaseCounter();
+      }
+    } 
+  }
 }
+
 
 export default App;
