@@ -9,15 +9,37 @@ class App extends Component {
     usersMessages: [],
   };
 
+  componentDidMount() {
+    const AOS = require('aos');
+    AOS.init({
+        duration : 1000,
+    });
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
   renderHistoryItem = (item, index) => {
     return (
       <div className="history-item">
         {index !== -1 && (
-          <div className="histoty-item-user">
+          <div
+            className="history-item-user"
+            data-aos="fade-right"
+            data-aos-easing="ease-out-cubic"
+            data-aos-duration="400"
+          >
             <span>{item}</span>
           </div>
         )}
-        <div className="history-item-bot">
+        <div
+          className="history-item-bot"
+          data-aos="fade-left"
+          data-aos-easing="ease-out-cubic"
+          data-aos-duration="400"
+          data-aos-delay="500"
+        >
           {botsLogic[index + 1].answer && <span>{botsLogic[index + 1].answer}</span>}
           {botsLogic[index + 1].question && <span>{botsLogic[index + 1].question}</span>}
         </div>
@@ -31,7 +53,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="chat">
-          <div className="chat-history">
+          <div id="chatHistory" className="chat-history" ref={(div) => { this.messageList = div }}>
             {this.renderHistoryItem(null, -1)}
             {usersMessages && usersMessages.map(this.renderHistoryItem)}
           </div>
@@ -39,10 +61,11 @@ class App extends Component {
             className="chat-input"
             id="mainInput"
             type="text"
+            placeholder="Введите текст..."
             onKeyPress={this.handleKeyPress}
           />
         </div>
-        <div className="chat-counter">Counter: <span>{this.state.count}</span></div>
+        <div className="chat-counter">Счётчик: <span>{this.state.count}</span></div>
       </div>
     );
   }
@@ -82,6 +105,13 @@ class App extends Component {
 
   handleClearUserMessages = () => {
     this.setState({ usersMessages: [] });
+  }
+
+  scrollToBottom() {
+    const scrollHeight = this.messageList.scrollHeight;
+    const height = this.messageList.clientHeight;
+    const maxScrollTop = scrollHeight - height;
+    this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
   }
 }
 
