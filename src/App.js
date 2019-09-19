@@ -5,18 +5,67 @@ const botsLogic = require('./logic.json');
 
 class App extends Component {
   state = {
-    count: 0
+    count: 0,
+    usersMessages: [],
   };
 
+  componentDidMount() {
+    const AOS = require('aos');
+    AOS.init({
+        duration : 1000,
+    });
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
+  renderHistoryItem = (item, index) => {
+    return (
+      <div className="history-item">
+        {index !== -1 && (
+          <div
+            className="history-item-user"
+            data-aos="fade-right"
+            data-aos-easing="ease-out-cubic"
+            data-aos-duration="400"
+          >
+            <span>{item}</span>
+          </div>
+        )}
+        <div
+          className="history-item-bot"
+          data-aos="fade-left"
+          data-aos-easing="ease-out-cubic"
+          data-aos-duration="400"
+          data-aos-delay="500"
+        >
+          {botsLogic[index + 1].answer && <span>{botsLogic[index + 1].answer}</span>}
+          {botsLogic[index + 1].question && <span>{botsLogic[index + 1].question}</span>}
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const { count } = this.state;
+    const { usersMessages } = this.state;
 
     return (
       <div className="App">
-        {botsLogic[count].answer && <div>{botsLogic[count].answer}</div>}
-        {botsLogic[count].question && <div>{botsLogic[count].question}</div>}
-        <div>{this.state.count}</div>
-        <input id="mainInput" type="text" onKeyPress={this.handleKeyPress} />
+        <div className="chat">
+          <div id="chatHistory" className="chat-history" ref={(div) => { this.messageList = div }}>
+            {this.renderHistoryItem(null, -1)}
+            {usersMessages && usersMessages.map(this.renderHistoryItem)}
+          </div>
+          <input
+            className="chat-input"
+            id="mainInput"
+            type="text"
+            placeholder="Введите текст..."
+            onKeyPress={this.handleKeyPress}
+          />
+        </div>
+        <div className="chat-counter">Счётчик: <span>{this.state.count}</span></div>
       </div>
     );
   }
@@ -35,15 +84,34 @@ class App extends Component {
     if (event.charCode === 13) {
       const mainInput = document.getElementById("mainInput");
       if (mainInput) {
-        mainInput.value = "";
-
         if (botsLogic[this.state.count + 1]) {
           this.handleIncreaseCounter();
+          this.handlePushToChat(mainInput.value);
         } else {
           this.handleSetDefaultCounter();
+          this.handleClearUserMessages();
         }
+
+        mainInput.value = "";
       }
     } 
+  }
+
+  handlePushToChat = message => {
+    this.setState(prevState => ({
+      usersMessages: [ ...prevState.usersMessages, message ],
+    }));
+  }
+
+  handleClearUserMessages = () => {
+    this.setState({ usersMessages: [] });
+  }
+
+  scrollToBottom() {
+    const scrollHeight = this.messageList.scrollHeight;
+    const height = this.messageList.clientHeight;
+    const maxScrollTop = scrollHeight - height;
+    this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
   }
 }
 
