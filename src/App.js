@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 import './App.css';
+import { Math } from 'core-js';
 
-const botsLogic = require('./logic.json');
+const horoscopes = require('./horoscopes.json');
+
+const getRandomNumber = maxValue => {
+  return Math.floor(Math.random() * Math.floor(maxValue));
+}
 
 class App extends Component {
   state = {
-    count: 0,
-    usersMessages: [],
+    userName: '',
+    usersZodiacSign: '',
   };
 
   componentDidMount() {
@@ -16,102 +21,122 @@ class App extends Component {
     });
   }
 
-  componentDidUpdate() {
-    this.scrollToBottom();
-  }
-
-  renderHistoryItem = (item, index) => {
-    return (
-      <div className="history-item">
-        {index !== -1 && (
-          <div
-            className="history-item-user"
-            data-aos="fade-right"
-            data-aos-easing="ease-out-cubic"
-            data-aos-duration="400"
-          >
-            <span>{item}</span>
-          </div>
-        )}
-        <div
-          className="history-item-bot"
-          data-aos="fade-left"
-          data-aos-easing="ease-out-cubic"
-          data-aos-duration="400"
-          data-aos-delay="500"
-        >
-          {botsLogic[index + 1].answer && <span>{botsLogic[index + 1].answer}</span>}
-          {botsLogic[index + 1].question && <span>{botsLogic[index + 1].question}</span>}
-        </div>
-      </div>
-    )
-  }
-
   render() {
-    const { usersMessages } = this.state;
+    const { userName, usersZodiacSign } = this.state;
+    const randomNumber = getRandomNumber(3);
 
     return (
       <div className="App">
-        <div className="chat">
-          <div id="chatHistory" className="chat-history" ref={(div) => { this.messageList = div }}>
-            {this.renderHistoryItem(null, -1)}
-            {usersMessages && usersMessages.map(this.renderHistoryItem)}
+        <div className="content-block">
+          <div className="top-input">
+            <input
+              className="chat-input"
+              id="nameInput"
+              type="text"
+              placeholder="Ваше имя..."
+              onKeyPress={this.handleKeyPress}
+            />
           </div>
-          <input
-            className="chat-input"
-            id="mainInput"
-            type="text"
-            placeholder="Введите текст..."
-            onKeyPress={this.handleKeyPress}
-          />
+          <div className="date-input">
+            <span className="date-title">Введите дату вашего рождения:</span>
+            <div className="date-input-birth">
+              <input
+                className="chat-input"
+                id="dayInput"
+                type="text"
+                placeholder="День"
+                onKeyPress={this.handleKeyPress}
+              />
+              <input
+                className="chat-input"
+                id="monthInput"
+                type="text"
+                placeholder="Месяц"
+                onKeyPress={this.handleKeyPress}
+              />
+              <input
+                className="chat-input"
+                id="yearInput"
+                type="text"
+                placeholder="Год"
+                onKeyPress={this.handleKeyPress}
+              />
+            </div>
+          </div>
+            {userName ? (
+              <div className="user-name">
+                <span>Зравствуйте&nbsp;</span>
+                {userName}
+                <span>! Ваш гороскоп:</span>
+              </div>
+            ) : null}
+            {usersZodiacSign ? (
+            <div className="horoscope-answer">
+              {horoscopes[randomNumber].answer}
+            </div>
+          ) : null}
         </div>
-        <div className="chat-counter">Счётчик: <span>{this.state.count}</span></div>
       </div>
     );
   }
 
-  handleIncreaseCounter = () => {
-    this.setState(prevState => ({
-      count: prevState.count + 1
-    }));
-  };
-
-  handleSetDefaultCounter = () => {
-    this.setState({ count: 0 });
-  };
-
   handleKeyPress = event => {
     if (event.charCode === 13) {
-      const mainInput = document.getElementById("mainInput");
-      if (mainInput) {
-        if (botsLogic[this.state.count + 1]) {
-          this.handleIncreaseCounter();
-          this.handlePushToChat(mainInput.value);
-        } else {
-          this.handleSetDefaultCounter();
-          this.handleClearUserMessages();
-        }
+      const nameInput = document.getElementById("nameInput").value;
+      const dayInput = +document.getElementById("dayInput").value;
+      const monthInput = +document.getElementById("monthInput").value;
+      const yearInput = +document.getElementById("yearInput").value;
 
-        mainInput.value = "";
+      if (dayInput > 31 || monthInput > 12) {
+        return;
+      }
+
+      this.handleSetUsersName(nameInput);
+
+      if (nameInput && dayInput && monthInput && yearInput) {
+        if ((dayInput >= 21 && monthInput === 3) || (dayInput <= 20 && monthInput <= 4)) {
+          this.handleSetUsersZodiacSign('овен');
+        } else if ((dayInput >= 21 && monthInput === 4) || (dayInput <= 21 && monthInput === 5)) {
+          this.handleSetUsersZodiacSign('телец');
+        } else if ((dayInput >= 22 && monthInput === 5) || (dayInput <= 21 && monthInput === 6)) {
+          this.handleSetUsersZodiacSign('близнецы');
+        } else if ((dayInput >= 22 && monthInput === 6) || (dayInput <= 22 && monthInput === 7)) {
+          this.handleSetUsersZodiacSign('рак');
+        } else if ((dayInput >= 23 && monthInput === 7) || (dayInput <= 22 && monthInput === 8)) {
+          this.handleSetUsersZodiacSign('лев');
+        } else if ((dayInput >= 24 && monthInput === 8) || (dayInput <= 22 && monthInput === 9)) {
+          this.handleSetUsersZodiacSign('дева');
+        } else if ((dayInput >= 23 && monthInput === 9) || (dayInput <= 23 && monthInput === 10)) {
+          this.handleSetUsersZodiacSign('весы');
+        } else if ((dayInput >= 24 && monthInput === 10) || (dayInput <= 22 && monthInput === 11)) {
+          this.handleSetUsersZodiacSign('скорпион');
+        } else if ((dayInput >= 23 && monthInput === 11) || (dayInput <= 21 && monthInput === 12)) {
+          this.handleSetUsersZodiacSign('стрелец');
+        } else if ((dayInput >= 22 && monthInput === 12) || (dayInput <= 20 && monthInput === 1)) {
+          this.handleSetUsersZodiacSign('козерог');
+        } else if ((dayInput >= 21 && monthInput === 1) || (dayInput <= 18 && monthInput === 2)) {
+          this.handleSetUsersZodiacSign('водолей');
+        } else {
+          this.handleSetUsersZodiacSign('рыбы');
+        }
       }
     } 
   }
 
-  handlePushToChat = message => {
-    this.setState(prevState => ({
-      usersMessages: [ ...prevState.usersMessages, message ],
-    }));
+  handleSetUsersName = value => {
+    if (value) {
+      this.setState({ userName: value });
+    } else {
+      this.setState({ userName: '' });
+    }
   }
 
-  handleClearUserMessages = () => {
-    this.setState({ usersMessages: [] });
-  }
-
-  scrollToBottom() {
-    const scrollHeight = this.messageList.scrollHeight;
-    const height = this.messageList.clientHeight;
-    const maxScrollTop = scrollHeight - height;
-    this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+  handleSetUsersZodiacSign = value => {
+    if (value) {
+      this.setState({ usersZodiacSign: value });
+    } else {
+      this.setState({ usersZodiacSign: '' });
+    }
   }
 }
 

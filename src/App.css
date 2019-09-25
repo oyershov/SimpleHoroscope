@@ -4,7 +4,7 @@
   overflow: hidden;
 }
 
-.chat {
+.content-block {
   border-radius: 15px;
   background: #fff;
   height: 500px;
@@ -23,9 +23,8 @@
   height: 30px;
   left: 20%;
   outline: none;
-  padding-left: 15px;
-  position: absolute;
-  top: 80%;
+  text-align: center;
+  position: relative;
   width: 300px;
 }
 
@@ -35,83 +34,41 @@
   background: rgba(0,0,0,0.1);
 }
 
-.chat-history {
+.top-input {
+  margin-top: 50px;
+}
+
+.date-input {
+  align-items: center;
   display: flex;
   flex-direction: column;
-  height: 300px;
-  left: 25px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
-  top: 25px;
-  width: 450px;
+  margin-top: 20px;
 }
 
-.history-item {
+.date-input-birth {
   display: flex;
-  width: 100%;
-  justify-content: space-between;
   flex-direction: row;
+  width: 320px;
 }
 
-.history-item:first-child {
+.date-input-birth > .chat-input {
   display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  flex-direction: row;
+  margin-left: 15px;
   margin-top: 10px;
+  left: 0;
+  width: 33%;
 }
 
-.history-item-user {
-  background: rgba(0, 0, 0, 0.06);
-  margin-left: 10px;
-}
-
-.history-item-bot {
-  background: #b3daff;
-  display: flex;
-  flex-direction: column;
+.user-name {
   margin-top: 40px;
-  margin-right: 10px;
-  text-align: left;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.history-item-user, .history-item-bot {
-  padding: 10px;
-  border-radius: 6px;
-  height: fit-content;
-  width: fit-content;
-  transition: opacity 4s ease-out;
-}
-
-.chat-history::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-history::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.chat-history::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.chat-history::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-.chat-counter {
-  border-radius: 15px;
-  background: #fff;
-  color: #333;
-  font-family: Verdana, sans-serif;
-  font-size: 18px;
+.horoscope-answer {
+  left: 20%;
   position: absolute;
-  right: 20px;
-  padding: 20px 30px;
-  top: 20px;
+  width: 320px;
 }
 
-.chat-counter > span {
-  font-weight: 600;
-}
