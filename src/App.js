@@ -12,6 +12,7 @@ class App extends Component {
   state = {
     userName: '',
     usersZodiacSign: '',
+    isWrongDate: '',
   };
 
   componentDidMount() {
@@ -22,8 +23,10 @@ class App extends Component {
   }
 
   render() {
-    const { userName, usersZodiacSign } = this.state;
+    const { userName, usersZodiacSign, isWrongDate } = this.state;
     const randomNumber = getRandomNumber(3);
+
+    const isRightName = userName.match('^[A-Za-zаАбБвВгГдДеЕёЁжЖзЗиИйЙкКлЛмМнНоОпПрРсСтТуУфФхХцЦчЧшШщЩъЪыЫьЬэЭюЮяЯ]+$');
 
     return (
       <div className="App">
@@ -63,17 +66,27 @@ class App extends Component {
               />
             </div>
           </div>
-            {userName ? (
-              <div className="user-name">
-                <span>Зравствуйте&nbsp;</span>
-                {userName}
-                <span>! Ваш гороскоп:</span>
-              </div>
-            ) : null}
-            {usersZodiacSign ? (
-            <div className="horoscope-answer">
-              {horoscopes[randomNumber].answer}
+          {isRightName && userName.length && !isWrongDate ? (
+            <div>
+              {userName ? (
+                <div className="user-name">
+                  <span>Зравствуйте&nbsp;{userName}!&nbsp;</span>
+                  <span>Вы {usersZodiacSign}.&nbsp;</span>
+                  <span>Ваш гороскоп:</span>
+                </div>
+              ) : null}
+              {usersZodiacSign ? (
+                <div className="horoscope-answer">
+                  {horoscopes[randomNumber].answer}
+                </div>
+              ) : null}
             </div>
+          ) : null}
+          {!isRightName && userName.length ? (
+            <div className="horoscope-answer"><br/><br/>Некорректное имя.</div>
+          ) : null}
+          {isWrongDate ? (
+            <div className="horoscope-answer"><br/>{isWrongDate}</div>
           ) : null}
         </div>
       </div>
@@ -86,11 +99,8 @@ class App extends Component {
       const dayInput = +document.getElementById("dayInput").value;
       const monthInput = +document.getElementById("monthInput").value;
       const yearInput = +document.getElementById("yearInput").value;
-
-      if (dayInput > 31 || monthInput > 12) {
-        return;
-      }
-
+      
+      this.handleSetIsWrongDate(dayInput, monthInput, yearInput);
       this.handleSetUsersName(nameInput);
 
       if (nameInput && dayInput && monthInput && yearInput) {
@@ -121,6 +131,20 @@ class App extends Component {
         }
       }
     } 
+  }
+
+  handleSetIsWrongDate = (day, month, year) => {
+    if (!String(day).match('^[0-9]+$') || !String(month).match('^[0-9]+$') || !String(year).match('^[0-9]+$')) {
+      this.setState({ isWrongDate: 'Дата должна содержать только цифры!' });
+    } else if (day < 1 || day > 31) {
+      this.setState({ isWrongDate: 'День должен быть в правильном диапазоне!' });
+    } else if (month < 1 || month > 12) {
+      this.setState({ isWrongDate: 'Месяц должен быть в правильном диапазоне!' });
+    } else if (year < 1) {
+      this.setState({ isWrongDate: 'Год должен быть в правильном диапазоне!' });
+    } else {
+      this.setState({ isWrongDate: '' });
+    }
   }
 
   handleSetUsersName = value => {

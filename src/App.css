@@ -1,5 +1,8 @@
 .App {
-  background: linear-gradient(45deg, #00dbde, #fc00ff);
+  background: url('./assets/images/background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
   height: 754px;
   overflow: hidden;
 }
